@@ -1,0 +1,49 @@
+<ui:composition template="../templates/layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:messages id="messages" showDetail="true" autoUpdate="true" />
+
+			<p:panel header="Alterar Senha">
+				<p:panelGrid columns="2" id="matchGrid">
+					<h:outputLabel value="Informe Senha Atual : " for="senha" />
+					<p:password id="senha" value="#{alteraSenhaController.senha}"
+						required="true" requiredMessage="Senha atual não informada!"/>
+					<h:outputLabel for="pwd1" value="Informe a nova senha : *" />
+					<p:password id="pwd1" value="#{alteraSenhaController.novaSenha1}"
+						label="Password 1" required="true" requiredMessage="Senha nova não informada!"/>
+
+					<h:outputLabel for="pwd2"
+						value="Informe a nova senha novamente : *" />
+					<p:password id="pwd2" value="#{alteraSenhaController.novaSenha2}"
+						label="Password 2" required="true" requiredMessage="Confirmação da nova senha não informada!"/>
+					<f:facet name="footer">
+						<center>
+							<p:commandButton value="Salvar"
+								action="#{alteraSenhaController.alterarSenha}" update=":form">
+								<p:confirm header="Confirmação da alteração"
+									message="Deseja alterar a senha?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</f:facet>
+				</p:panelGrid>
+
+			</p:panel>
+			<p:confirmDialog global="true" showEffect="fade">
+				<center>
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				</center>
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
