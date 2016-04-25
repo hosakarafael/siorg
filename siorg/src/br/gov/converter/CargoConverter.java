@@ -1,0 +1,36 @@
+package br.gov.converter;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
+
+import br.gov.dao.CargoDAO;
+import br.gov.entity.Cargo;
+
+@FacesConverter(value="CargoConverter")
+public class CargoConverter implements Converter{
+
+	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+		if (value.equals("Nenhum"))
+			return null;
+		try {
+			String chaves[] = value.split(" "); 
+			return new CargoDAO().find(Integer.parseInt(chaves[0]),Integer.parseInt(chaves[1]));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Object();
+		}
+	}
+
+	@Override
+	public String getAsString(FacesContext context, UIComponent component,
+			Object value) {
+		if (value == null)
+			return null;
+		Cargo cargo = (Cargo) value;
+		return (Integer.toString(cargo.getId())+" "+Integer.toString(cargo.getVersao()));
+	}
+
+}

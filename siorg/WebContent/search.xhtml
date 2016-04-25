@@ -1,0 +1,99 @@
+<ui:composition template="/templates/layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="content">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" />
+		<h:form id="form">
+			<p:inputMask value="#{searchController.dataPesquisaFormatada}"
+				mask="99/99/9999">
+				<f:validator validatorId="DateIsPastValidator" />
+			</p:inputMask>
+			<p:commandButton action="#{searchController.pesquisar}"
+				value="Pesquisar" update=":form:tableOrg">
+				<p:ajax event="click" />
+			</p:commandButton>
+			<p:treeTable id="tableOrg" value="#{searchController.root}" var="org"
+				selectionMode="single">
+				<f:facet name="header">
+               		Órgãos
+               		<p:commandLink
+						action="#{searchController.redirecionaOrganogramaPublico}"
+						immediate="true">
+						<p:ajax event="click" />
+						<h:graphicImage value="/img/organograma.png"
+							title="Visualizar Organograma" style="border: none" />
+					</p:commandLink>
+
+				</f:facet>
+
+				<p:column>
+					<f:facet name="header">Nome<br/>
+						<p:inputText value="#{searchController.filterOrg}" />
+								<p:commandButton value="Filtrar"
+									actionListener="#{searchController.filtrarOrgao}" update=":form">
+									<p:ajax event="click" />
+								</p:commandButton>
+					</f:facet>
+					<h:outputText value="#{org.nome}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">Ação</f:facet>
+					<p:commandLink actionListener="#{searchController.visualizar}"
+						immediate="true" oncomplete="dlgVisualizar.show()"
+						update=":form:dlg">
+						<p:ajax event="click" />
+						<f:attribute name="orgao" value="#{org}" />
+						<h:graphicImage value="/img/search.png" title="Visualizar"
+							style="border: none" />
+					</p:commandLink>
+				</p:column>
+			</p:treeTable>
+			<p:dialog id="dlg" header="Visualizar Servidores"
+				widgetVar="dlgVisualizar" resizable="false" showEffect="fade"
+				draggable="false" modal="true" appendTo="@(body)">
+				<h:form id="dlgVisualizarForm">
+					<p:outputLabel value="Filtrar por" />
+					<p:selectOneRadio id="filterCargo"
+						value="#{searchController.filterCargo}">
+						<f:selectItem itemLabel="Todos" itemValue="todos" />
+						<f:selectItem itemLabel="Com Cargo" itemValue="comCargo" />
+						<f:selectItem itemLabel="Sem Cargo" itemValue="semCargo" />
+						<p:ajax update="servidores"
+							listener="#{searchController.filtrarServidor}" />
+					</p:selectOneRadio>
+					<p:dataTable id="servidores"
+						value="#{searchController.selectedServidores}" var="serv"
+						scrollable="true" scrollHeight="150">
+						<p:column>
+							<f:facet name="header">Nome
+							
+							</f:facet>
+							<h:outputText value="#{serv.nome}" />
+						</p:column>
+						<p:column filterBy="#{serv.matricula}" filterMatchMode="contains">
+							<f:facet name="header">Matrícula</f:facet>
+							<h:outputText value="#{serv.matricula}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">Status</f:facet>
+							<h:outputText value="Efetivado" rendered="#{serv.efetivo}" />
+							<h:outputText value="Não efetivado"
+								rendered="#{not serv.efetivo}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">Cargo</f:facet>
+							<h:outputText value="#{serv.cargo.nome}" />
+						</p:column>
+					</p:dataTable>
+				</h:form>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
